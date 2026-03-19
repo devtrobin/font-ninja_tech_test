@@ -1,3 +1,5 @@
+const { ScrapperSniffer } = require("./online");
+
 const backendApiUrl = process.env.BACKEND_API_URL ?? "http://backend:3000/api";
 const scrapperId = Number(process.env.SCRAPPER_ID);
 
@@ -33,10 +35,11 @@ async function createScrapper() {
   return response.json();
 }
 
-function logScrapperState(state) {
+async function logScrapperState(state) {
   if (state === "run") {
     console.log("Scrapper online");
-    ScrapperSniffer();
+    await ScrapperSniffer();
+    return;
   }
 
   if (state === "pause") {
@@ -70,7 +73,7 @@ async function main() {
     return;
   }
 
-  logScrapperState(existingScrapper.state);
+  await logScrapperState(existingScrapper.state);
 }
 
 main().catch((error) => {
