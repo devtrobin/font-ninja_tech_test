@@ -12,4 +12,24 @@ export class GetArticlesQueryDto {
   @IsInt()
   @Min(0)
   days?: number;
+
+  @ApiPropertyOptional({
+    description: "Nombre maximum d'articles a retourner",
+    example: 20,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit?: number;
+
+  @ApiPropertyOptional({
+    description: "Nombre d'articles a ignorer pour la pagination",
+    example: 0,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  offset?: number;
 }

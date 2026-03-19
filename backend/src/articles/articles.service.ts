@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import moment from 'moment';
-import { Op, type WhereOptions } from 'sequelize';
+import { Op, type FindOptions, type WhereOptions } from 'sequelize';
 import { Article } from './article.model';
 import { CheckArticleResponseDto } from './dto/check-article-response.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -41,6 +41,13 @@ export class ArticlesService {
 
   async findAll(query: GetArticlesQueryDto): Promise<Article[]> {
     const where: WhereOptions<Article> = {};
+    const findOptions: FindOptions<Article> = {
+      where,
+      order: [
+        ['publicationDate', 'DESC'],
+        ['id', 'ASC'],
+      ],
+    };
 
     if (query.days !== undefined) {
       where.publicationDate = {
@@ -48,13 +55,15 @@ export class ArticlesService {
       };
     }
 
-    return this.articleModel.findAll({
-      where,
-      order: [
-        ['publicationDate', 'DESC'],
-        ['id', 'ASC'],
-      ],
-    });
+    if (typeof query.limit === 'number') {
+      findOptions.limit = query.limit;
+    }
+
+    if (typeof query.offset === 'number') {
+      findOptions.offset = query.offset;
+    }
+
+    return this.articleModel.findAll(findOptions);
   }
 
   async findOne(id: number): Promise<Article> {

@@ -56,6 +56,18 @@ export class ArticlesController {
     type: Number,
     description: 'Filtre les articles publies dans les N derniers jours',
   })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: "Nombre maximum d'articles a retourner",
+  })
+  @ApiQuery({
+    name: 'offset',
+    required: false,
+    type: Number,
+    description: "Nombre d'articles a ignorer pour la pagination",
+  })
   @ApiOkResponse({
     description: 'Retourne tous les articles.',
     type: Article,
