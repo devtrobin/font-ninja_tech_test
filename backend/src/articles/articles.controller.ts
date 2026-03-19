@@ -21,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { Article } from './article.model';
 import { ArticlesService } from './articles.service';
+import { CheckArticleResponseDto } from './dto/check-article-response.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { GetArticlesQueryDto } from './dto/get-articles-query.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -37,6 +38,15 @@ export class ArticlesController {
   })
   create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
     return this.articlesService.create(createArticleDto);
+  }
+
+  @Post('check')
+  @ApiOkResponse({
+    description: "Verifie si l'article existe deja en base.",
+    type: CheckArticleResponseDto,
+  })
+  check(@Body() articleDto: CreateArticleDto): Promise<CheckArticleResponseDto> {
+    return this.articlesService.checkExists(articleDto);
   }
 
   @Get()

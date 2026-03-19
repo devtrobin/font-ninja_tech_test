@@ -1,148 +1,110 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { extractArticlesFromHtml } = require("./ExtractArticle");
 
 const logDirectory = path.join(__dirname, "..", "logs");
 const logFilePath = path.join(logDirectory, "scrapper.json");
-
-function extractTitle(html) {
-  const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-  return match ? match[1].trim() : null;
-}
+const backendApiUrl = process.env.BACKEND_API_URL ?? "http://backend:3000/api";
+const scrapperId = Number(process.env.SCRAPPER_ID);
 
 async function writeLog(payload) {
   await fs.mkdir(logDirectory, { recursive: true });
   await fs.writeFile(logFilePath, JSON.stringify(payload, null, 2), "utf8");
 }
 
-function findBalancedJsonObject(text, startIndex) {
-  let depth = 0;
-  let inString = false;
-  let escaped = false;
-
-  for (let index = startIndex; index < text.length; index += 1) {
-    const char = text[index];
-
-    if (inString) {
-      if (escaped) {
-        escaped = false;
-        continue;
-      }
-
-      if (char === "\\") {
-        escaped = true;
-        continue;
-      }
-
-      if (char === '"') {
-        inString = false;
-      }
-
-      continue;
-    }
-
-    if (char === '"') {
-      inString = true;
-      continue;
-    }
-
-    if (char === "{") {
-      depth += 1;
-      continue;
-    }
-
-    if (char === "}") {
-      depth -= 1;
-
-      if (depth === 0) {
-        return text.slice(startIndex, index + 1);
-      }
-    }
+async function fetchCurrentScrapper() {
+  if (!Number.isInteger(scrapperId)) {
+    throw new Error("SCRAPPER_ID must be a valid integer");
   }
 
-  return null;
+  const response = await fetch(`${backendApiUrl}/scrappers`);
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`GET /scrappers failed: ${response.status} ${body}`);
+  }
+
+  const scrappers = await response.json();
+  return scrappers.find((item) => item.scrapperId === scrapperId) ?? null;
 }
 
-function extractJsonObjects(text) {
-  const jsonObjects = [];
-  const seen = new Set();
+async function assertScrapperRunnable() {
+  const scrapper = await fetchCurrentScrapper();
 
-  for (let index = 0; index < text.length; index += 1) {
-    if (text[index] !== "{") {
-      continue;
-    }
-
-    const candidate = findBalancedJsonObject(text, index);
-
-    if (!candidate || seen.has(candidate)) {
-      continue;
-    }
-
-    try {
-      const parsed = JSON.parse(candidate);
-      jsonObjects.push(parsed);
-      seen.add(candidate);
-      index += candidate.length - 1;
-    } catch {
-      continue;
-    }
+  if (!scrapper) {
+    throw new Error(`Scrapper ${scrapperId} not found`);
   }
 
-  return jsonObjects;
+  if (scrapper.state === "pause") {
+    console.log("Scrapper Pause");
+    process.exit(0);
+  }
+
+  if (scrapper.state === "error") {
+    console.log("Scrapper Error");
+    process.exit(1);
+  }
+
+  return scrapper;
 }
 
-function isNonEmptyValue(value) {
-  return value !== undefined && value !== null && value !== "";
+function buildArticlePayload(article, baseUrl) {
+  const url = new URL(article.href, baseUrl).toString();
+  const publicationTimestamp =
+    article.metadata?.firstUpdated ?? article.metadata?.lastUpdated ?? null;
+  const publicationDate =
+    typeof publicationTimestamp === "number"
+      ? new Date(publicationTimestamp).toISOString()
+      : undefined;
+  const source = new URL(baseUrl).hostname.replace(/^www\./, "");
+
+  return {
+    title: article.title,
+    url,
+    ...(publicationDate ? { publicationDate } : {}),
+    source,
+  };
 }
 
-function isArticleCandidate(item) {
-  if (!item || typeof item !== "object" || Array.isArray(item)) {
-    return false;
+async function articleExists(payload) {
+  const response = await fetch(`${backendApiUrl}/articles/check`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`POST /articles/check failed: ${response.status} ${body}`);
   }
 
-  return (
-    Object.prototype.hasOwnProperty.call(item, "href") &&
-    Object.prototype.hasOwnProperty.call(item, "title") &&
-    Object.prototype.hasOwnProperty.call(item, "id") &&
-    Object.prototype.hasOwnProperty.call(item, "description") &&
-    Object.prototype.hasOwnProperty.call(item, "metadata") &&
-    isNonEmptyValue(item.href) &&
-    isNonEmptyValue(item.title) &&
-    isNonEmptyValue(item.id) &&
-    isNonEmptyValue(item.description) &&
-    isNonEmptyValue(item.metadata) &&
-    isNonEmptyValue(item.metadata.contentType) &&
-    item.metadata?.contentType === "article"
-  );
+  return response.json();
 }
 
-function extractArticles(input, articles = [], seen = new Set()) {
-  if (!input || typeof input !== "object") {
-    return articles;
+async function createArticle(article, baseUrl) {
+  const payload = buildArticlePayload(article, baseUrl);
+  const checkResult = await articleExists(payload);
+
+  if (checkResult.exists) {
+    return null;
   }
 
-  if (Array.isArray(input)) {
-    for (const item of input) {
-      extractArticles(item, articles, seen);
-    }
-    return articles;
+  const response = await fetch(`${backendApiUrl}/articles`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`POST /articles failed: ${response.status} ${body}`);
   }
 
-  if (isArticleCandidate(input)) {
-    const key = input.id;
-
-    if (!seen.has(key)) {
-      seen.add(key);
-      articles.push(input);
-    }
-  }
-
-  for (const value of Object.values(input)) {
-    if (value && typeof value === "object") {
-      extractArticles(value, articles, seen);
-    }
-  }
-
-  return articles;
+  return response.json();
 }
 
 async function ScrapperSniffer() {
@@ -162,9 +124,12 @@ async function ScrapperSniffer() {
   }
 
   const html = await response.text();
-  const title = extractTitle(html);
-  const jsonObjects = extractJsonObjects(html);
-  const articles = extractArticles(jsonObjects);
+  const { title, articles } = extractArticlesFromHtml(html);
+
+  for (const article of articles) {
+    await assertScrapperRunnable();
+    await createArticle(article, uriToScrap);
+  }
 
   const logPayload = {
     timestamp: new Date().toISOString(),

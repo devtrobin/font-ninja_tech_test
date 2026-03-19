@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-03-19T01:55:32.118Z",
+  "timestamp": "2026-03-19T02:33:56.068Z",
   "url": "https://www.bbc.com/news",
   "title": "BBC News - Breaking news, video and the latest top stories from the U.S. and around the world",
-  "articlesCount": 38,
+  "articlesCount": 39,
   "articles": [
     {
       "title": "US intelligence chief says Iran's regime 'intact' but 'degraded'",
@@ -953,6 +953,40 @@
       "versionId": ""
     },
     {
+      "title": "US civil rights leader Cesar Chavez accused of sexual abuse ",
+      "href": "/news/articles/cp8r8rggxmmo",
+      "isLiveNow": false,
+      "metadata": {
+        "contentType": "article",
+        "subtype": "news",
+        "lastUpdated": 1773881803536,
+        "firstUpdated": 1773881803536,
+        "topics": [
+          "US & Canada"
+        ]
+      },
+      "tags": [],
+      "description": "The allegations have prompted the cancellations of events and celebrations planned in his honour later this month. ",
+      "image": {
+        "type": "indexImage",
+        "model": {
+          "blocks": {
+            "src": "https://ichef.bbci.co.uk/news/480/cpsprodpb/a8dd/live/c1e897c0-2314-11f1-83bb-2f220ea2da92.jpg",
+            "altText": "United Farm Workers President César Chávez speaks to crowd of supporters as he joined Presidential candidate Jesse Jackson in a support walk and rally on 4 June 4,1988 in McFarland, California.\n",
+            "width": 1024,
+            "height": 576
+          }
+        }
+      },
+      "relatedUrls": [],
+      "id": "urn:bbc:optimo:asset:cp8r8rggxmmo",
+      "brandName": "",
+      "seriesName": "",
+      "seriesId": "",
+      "brandId": "",
+      "versionId": ""
+    },
+    {
       "title": "The Iran war is causing a global energy crisis - can China withstand it?",
       "href": "/news/articles/cyv9lzn0816o",
       "isLiveNow": false,
@@ -987,40 +1021,6 @@
       "versionId": ""
     },
     {
-      "title": "India's cheap weight-loss drugs could reshape global obesity fight",
-      "href": "/news/articles/cx2g4411en3o",
-      "isLiveNow": false,
-      "metadata": {
-        "contentType": "article",
-        "subtype": "news",
-        "lastUpdated": 1773793849255,
-        "firstUpdated": 1773793849255,
-        "topics": [
-          "Asia"
-        ]
-      },
-      "tags": [],
-      "description": "With India’s semaglutide patent expiring on 20 March, about 50 branded generics are expected to enter the market.",
-      "image": {
-        "type": "indexImage",
-        "model": {
-          "blocks": {
-            "src": "https://ichef.bbci.co.uk/news/480/cpsprodpb/93c1/live/1ad74b40-22b8-11f1-a79a-77e93010d956.jpg",
-            "altText": "A woman in a burgandy top holds a weight loss injection pen",
-            "width": 1920,
-            "height": 1080
-          }
-        }
-      },
-      "relatedUrls": [],
-      "id": "urn:bbc:optimo:asset:cx2g4411en3o",
-      "brandName": "",
-      "seriesName": "",
-      "seriesId": "",
-      "brandId": "",
-      "versionId": ""
-    },
-    {
       "title": "How Finnish supermarkets are central to the country's defence",
       "href": "/news/articles/cly1mg3zy20o",
       "isLiveNow": false,
@@ -1048,6 +1048,40 @@
       },
       "relatedUrls": [],
       "id": "urn:bbc:optimo:asset:cly1mg3zy20o",
+      "brandName": "",
+      "seriesName": "",
+      "seriesId": "",
+      "brandId": "",
+      "versionId": ""
+    },
+    {
+      "title": "India's cheap weight-loss drugs could reshape global obesity fight",
+      "href": "/news/articles/cx2g4411en3o",
+      "isLiveNow": false,
+      "metadata": {
+        "contentType": "article",
+        "subtype": "news",
+        "lastUpdated": 1773793849255,
+        "firstUpdated": 1773793849255,
+        "topics": [
+          "Asia"
+        ]
+      },
+      "tags": [],
+      "description": "With India’s semaglutide patent expiring on 20 March, about 50 branded generics are expected to enter the market.",
+      "image": {
+        "type": "indexImage",
+        "model": {
+          "blocks": {
+            "src": "https://ichef.bbci.co.uk/news/480/cpsprodpb/93c1/live/1ad74b40-22b8-11f1-a79a-77e93010d956.jpg",
+            "altText": "A woman in a burgandy top holds a weight loss injection pen",
+            "width": 1920,
+            "height": 1080
+          }
+        }
+      },
+      "relatedUrls": [],
+      "id": "urn:bbc:optimo:asset:cx2g4411en3o",
       "brandName": "",
       "seriesName": "",
       "seriesId": "",

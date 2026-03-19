@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import moment from 'moment';
 import { Op, type WhereOptions } from 'sequelize';
 import { Article } from './article.model';
+import { CheckArticleResponseDto } from './dto/check-article-response.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { GetArticlesQueryDto } from './dto/get-articles-query.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -23,6 +24,19 @@ export class ArticlesService {
         : null,
       source: createArticleDto.source,
     });
+  }
+
+  async checkExists(articleDto: CreateArticleDto): Promise<CheckArticleResponseDto> {
+    const article = await this.articleModel.findOne({
+      where: {
+        url: articleDto.url,
+      },
+    });
+
+    return {
+      exists: article !== null,
+      articleId: article?.id ?? null,
+    };
   }
 
   async findAll(query: GetArticlesQueryDto): Promise<Article[]> {

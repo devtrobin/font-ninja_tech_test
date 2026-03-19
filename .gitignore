@@ -28,6 +28,7 @@ coverage/
 
 # Docker / local runtime
 mysql_data/
+scrapper/logs/
 
 # Nest / misc
 .cache/
