@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS articles (
   source VARCHAR(255) NOT NULL
 );
 
+CREATE UNIQUE INDEX ux_articles_url ON articles (url);
+CREATE INDEX idx_articles_publication_date_id ON articles (publication_date DESC, id ASC);
+
 CREATE TABLE IF NOT EXISTS scrappers (
   id INT AUTO_INCREMENT PRIMARY KEY,
   scrapper_id INT,
