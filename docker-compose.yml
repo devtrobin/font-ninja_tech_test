@@ -54,11 +54,11 @@ services:
       - /app/node_modules
     command: npm run start:dev
 
-  scrapper:
+  scrapper_bbc:
     build:
       context: ./scrapper
       dockerfile: Dockerfile
-    container_name: font-ninja-scrapper
+    container_name: font-ninja-scrapper-bbc
     restart: unless-stopped
     depends_on:
       backend:
@@ -67,13 +67,45 @@ services:
       NODE_ENV: development
       BACKEND_API_URL: http://backend:3000/api
       URI_TO_SCRAP: "https://www.bbc.com/news"
+      EXTRACTOR_FILE: ExtractArticle_BBC.js
       SCRAPPER_ID: 1
       SCRAPPER_STARTUP_STATE: run
       SCRAPPER_RESTART_DELAY_SECONDS: 60
-    ports:
-      - "4001:4001"
     volumes:
       - ./scrapper:/app
+      - ./scrapper_extract:/extractors:ro
+      - /app/node_modules
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          npm start
+          exit_code=$?
+          echo "[scrapper] process stopped with code $$exit_code, restart in $${SCRAPPER_RESTART_DELAY_SECONDS:-60}s"
+          sleep "${SCRAPPER_RESTART_DELAY_SECONDS:-60}"
+        done
+
+  scrapper_ycombinator:
+    build:
+      context: ./scrapper
+      dockerfile: Dockerfile
+    container_name: font-ninja-scrapper-ycombinator
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      BACKEND_API_URL: http://backend:3000/api
+      URI_TO_SCRAP: "https://news.ycombinator.com/"
+      EXTRACTOR_FILE: ExtractArticle_YCOMBINATOR.js
+      SCRAPPER_ID: 2
+      SCRAPPER_STARTUP_STATE: run
+      SCRAPPER_RESTART_DELAY_SECONDS: 60
+    volumes:
+      - ./scrapper:/app
+      - ./scrapper_extract:/extractors:ro
       - /app/node_modules
     command:
       - /bin/sh

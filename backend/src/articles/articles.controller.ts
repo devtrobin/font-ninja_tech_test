@@ -54,8 +54,7 @@ export class ArticlesController {
     name: 'days',
     required: false,
     type: Number,
-    description:
-      'Filtre les articles dont la date de publication est antérieure au nombre de jours indiqué',
+    description: 'Filtre les articles publies dans les N derniers jours',
   })
   @ApiOkResponse({
     description: 'Retourne tous les articles.',

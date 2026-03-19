@@ -4,8 +4,7 @@ import { IsInt, IsOptional, Min } from 'class-validator';
 
 export class GetArticlesQueryDto {
   @ApiPropertyOptional({
-    description:
-      'Retourne uniquement les articles dont la date de publication est antérieure à N jours',
+    description: 'Retourne uniquement les articles publies dans les N derniers jours',
     example: 7,
   })
   @IsOptional()

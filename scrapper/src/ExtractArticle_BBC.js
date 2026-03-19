@@ -99,6 +99,14 @@ function isArticleCandidate(item) {
   );
 }
 
+function toPublicationDate(timestamp) {
+  if (typeof timestamp !== "number" || Number.isNaN(timestamp)) {
+    return null;
+  }
+
+  return new Date(timestamp).toISOString();
+}
+
 function extractArticles(input, articles = [], seen = new Set()) {
   if (!input || typeof input !== "object") {
     return articles;
@@ -116,7 +124,10 @@ function extractArticles(input, articles = [], seen = new Set()) {
 
     if (!seen.has(key)) {
       seen.add(key);
-      articles.push(input);
+      articles.push({
+        ...input,
+        publicationDate: toPublicationDate(input.metadata?.firstUpdated),
+      });
     }
   }
 

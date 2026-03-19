@@ -44,7 +44,7 @@ export class ArticlesService {
 
     if (query.days !== undefined) {
       where.publicationDate = {
-        [Op.lt]: moment().subtract(query.days, 'days').toDate(),
+        [Op.gte]: moment().subtract(query.days, 'days').toDate(),
       };
     }
 
