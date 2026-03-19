@@ -12,6 +12,7 @@ Ce projet contient un environnement Docker Compose avec :
 - NestJS
 - TypeScript
 - MySQL 8.4
+- Sequelize
 - ESLint
 - Prettier
 - Swagger
@@ -56,6 +57,13 @@ npm run format:check
 
 - API: `http://localhost:3000/api/health`
 - Swagger: `http://localhost:3000/api/docs`
+- Articles: `http://localhost:3000/api/articles`
+
+Exemple de filtre :
+
+```bash
+GET /api/articles?days=7
+```
 
 ## Variables de connexion MySQL
 
@@ -64,3 +72,13 @@ npm run format:check
 - base: `font_ninja`
 - utilisateur: `app`
 - mot de passe: `app`
+
+## Table `articles`
+
+La table `articles` est prévue avec les colonnes suivantes :
+
+- `id` : identifiant auto-généré
+- `title` : titre de l'article
+- `url` : lien vers l'article
+- `publication_date` : date de publication, nullable
+- `source` : nom du site d'actualité

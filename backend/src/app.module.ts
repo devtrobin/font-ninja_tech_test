@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Article } from './articles/article.model';
+import { ArticlesModule } from './articles/articles.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -8,20 +10,23 @@ const databaseModule =
   process.env.DB_ENABLED === 'false'
     ? []
     : [
-        TypeOrmModule.forRootAsync({
+        SequelizeModule.forRootAsync({
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => ({
-            type: 'mysql' as const,
+            dialect: 'mysql' as const,
             host: configService.get<string>('DB_HOST', 'localhost'),
             port: Number(configService.get<string>('DB_PORT', '3306')),
             username: configService.get<string>('DB_USERNAME', 'app'),
             password: configService.get<string>('DB_PASSWORD', 'app'),
             database: configService.get<string>('DB_NAME', 'font_ninja'),
-            autoLoadEntities: true,
+            autoLoadModels: true,
             synchronize: true,
+            models: [Article],
           }),
         }),
       ];
+
+const featureModules = process.env.DB_ENABLED === 'false' ? [] : [ArticlesModule];
 
 @Module({
   imports: [
@@ -29,6 +34,7 @@ const databaseModule =
       isGlobal: true,
     }),
     ...databaseModule,
+    ...featureModules,
   ],
   controllers: [AppController],
   providers: [AppService],
