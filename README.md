@@ -4,6 +4,7 @@ Ce projet contient un environnement Docker Compose avec :
 
 - un service `mysql`
 - un service `backend` NestJS en TypeScript
+- un service `scrapper` Node.js
 - un dossier `DB/` avec le script d'initialisation SQL
 
 ## Stack
@@ -13,6 +14,7 @@ Ce projet contient un environnement Docker Compose avec :
 - TypeScript
 - MySQL 8.4
 - Sequelize
+- un service de scrapping Node.js
 - ESLint
 - Prettier
 - Swagger
@@ -26,6 +28,8 @@ docker compose up --build
 ```
 
 Le script [`DB/init.sql`](/Users/trobin/workspace/Test_technque_Font_ninja/DB/init.sql) est exécuté automatiquement par MySQL au premier démarrage du volume.
+
+Le service `scrapper` démarre dans un conteneur séparé et peut appeler le backend via `http://backend:3000/api`.
 
 ## Préparation Git
 
@@ -58,6 +62,7 @@ npm run format:check
 - API: `http://localhost:3000/api/health`
 - Swagger: `http://localhost:3000/api/docs`
 - Articles: `http://localhost:3000/api/articles`
+- Scrappers: `http://localhost:3000/api/scrappers`
 
 Exemple de filtre :
 
@@ -72,6 +77,12 @@ GET /api/articles?days=7
 - base: `font_ninja`
 - utilisateur: `app`
 - mot de passe: `app`
+
+## Variables du service `scrapper`
+
+- `BACKEND_API_URL` : URL du backend vue depuis le conteneur, par défaut `http://backend:3000/api`
+- `SCRAPPER_ID` : identifiant du scrapper a mettre a jour via l'API
+- `SCRAPPER_STARTUP_STATE` : statut envoye au demarrage, par defaut `run`
 
 ## Table `articles`
 

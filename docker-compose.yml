@@ -39,10 +39,47 @@ services:
       NODE_ENV: development
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     volumes:
       - ./backend:/app
       - /app/node_modules
     command: npm run start:dev
+
+  scrapper:
+    build:
+      context: ./scrapper
+      dockerfile: Dockerfile
+    container_name: font-ninja-scrapper
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      BACKEND_API_URL: http://backend:3000/api
+      SCRAPPER_ID: 1
+      SCRAPPER_STARTUP_STATE: run
+      SCRAPPER_RESTART_DELAY_SECONDS: 60
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./scrapper:/app
+      - /app/node_modules
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          npm start
+          exit_code=$?
+          echo "[scrapper] process stopped with code $$exit_code, restart in $${SCRAPPER_RESTART_DELAY_SECONDS:-60}s"
+          sleep "${SCRAPPER_RESTART_DELAY_SECONDS:-60}"
+        done
 
 volumes:
   mysql_data:

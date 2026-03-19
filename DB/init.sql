@@ -15,5 +15,12 @@ CREATE TABLE IF NOT EXISTS articles (
   source VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS scrappers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  scrapper_id INT,
+  date_status_change DATETIME,
+  state ENUM('run', 'pause', 'error')
+);
+
 INSERT INTO app_health_log (service_name, status)
 VALUES ('font-ninja-backend', 'initialized');

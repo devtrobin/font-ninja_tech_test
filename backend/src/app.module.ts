@@ -5,6 +5,8 @@ import { Article } from './articles/article.model';
 import { ArticlesModule } from './articles/articles.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Scrapper } from './scrappers/scrapper.model';
+import { ScrappersModule } from './scrappers/scrappers.module';
 
 const databaseModule =
   process.env.DB_ENABLED === 'false'
@@ -21,12 +23,13 @@ const databaseModule =
             database: configService.get<string>('DB_NAME', 'font_ninja'),
             autoLoadModels: true,
             synchronize: true,
-            models: [Article],
+            models: [Article, Scrapper],
           }),
         }),
       ];
 
-const featureModules = process.env.DB_ENABLED === 'false' ? [] : [ArticlesModule];
+const featureModules =
+  process.env.DB_ENABLED === 'false' ? [] : [ArticlesModule, ScrappersModule];
 
 @Module({
   imports: [

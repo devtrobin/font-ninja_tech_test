@@ -1,0 +1,9 @@
+{
+  "name": "font-ninja-scrapper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Service Node.js de scrapping consommant les APIs du backend",
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}
