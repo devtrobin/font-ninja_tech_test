@@ -110,13 +110,13 @@ ORDER BY publication_date DESC, id ASC;
 Indexes proposes dans [`DB/init.sql`](/Users/trobin/workspace/Test_technque_Font_ninja/DB/init.sql) :
 
 ```sql
-CREATE UNIQUE INDEX ux_articles_url ON articles (url);
+CREATE UNIQUE INDEX ux_articles_url_hash ON articles (url_hash);
 CREATE INDEX idx_articles_publication_date_id ON articles (publication_date DESC, id ASC);
 ```
 
 Pourquoi ces indexes :
 
-- `ux_articles_url` accelere la verification d'existence d'un article et garantit l'unicite metier par URL.
+- `ux_articles_url_hash` garantit l'unicite metier sur une URL longue sans depasser la limite de taille d'index MySQL sur `VARCHAR(2048)`.
 - `idx_articles_publication_date_id` accelere le filtre temporel sur `publication_date` et soutient le tri `ORDER BY publication_date DESC, id ASC`.
 
 ## Choix Techniques

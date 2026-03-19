@@ -11,11 +11,12 @@ CREATE TABLE IF NOT EXISTS articles (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   url VARCHAR(2048) NOT NULL,
+  url_hash BINARY(32) GENERATED ALWAYS AS (UNHEX(SHA2(url, 256))) STORED,
   publication_date DATETIME NULL,
   source VARCHAR(255) NOT NULL
 );
 
-CREATE UNIQUE INDEX ux_articles_url ON articles (url);
+CREATE UNIQUE INDEX ux_articles_url_hash ON articles (url_hash);
 CREATE INDEX idx_articles_publication_date_id ON articles (publication_date DESC, id ASC);
 
 CREATE TABLE IF NOT EXISTS scrappers (
